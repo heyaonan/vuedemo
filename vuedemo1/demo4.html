@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>指令</title>
+    <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+  </head>
+  <body>
+    <!-- 指令是以v-为前缀的特殊特性，指令的预期值是单个js表达式(v-for指令除外)，指令的职责是当表达式的值改变时，产生的连带影响，响应式地作用于dom -->
+    <div>
+      <!-- v-if指令将根据传入表达式的真假值来移出或者插入dom元素 -->
+      <div id="app-1">
+        <p v-if = "seen"> 现在能看到我</p>
+      </div>
+      <!-- #参数 一些指令可以接受一些参数，这个参数是以指令冒号后边表示，用于响应式的更新html的特性，所以这些参数可以实html的各种属性 -->
+      
+      <div id="app-2">
+        <a v-bind:href="url">百度一下,你就知道</a>
+        <button v-on:click="click">打开百度</button>
+        <!-- vue2.6之后，新增了可以用方括号传入属性名来作为参数,这个参数最好不要使用dom元素的属性，例如attributeName
+        对动态参数值的约束：参数预期会传入是一个字符串，异常情况下若不是字符串，例如是null，则会移出该绑定
+        对动态参数表达式的约束：动态参数表达式有一些语法约束，因为某些字符，如空格和引号，放在 HTML attribute 名里是无效的
+        -->
+        <a v-bind:[attributename]="url">百度</a>
+        <!-- 这个会触发编译警告，编译通不过
+        <a v-bind:['foor'+url]="url">百度</a>
+      所以只能使用没有引号和空格的参数
+      且绑定参数名避免用大写符号命名，浏览器会将大写参数名默认转换成小写
+      -->
+        
+      </div>
+
+
+
+    </div>
+    <script type="text/javascript">
+      data = {
+        seen: false,
+        url: "http://www.baidu.com",
+        attributename: "href"
+      }
+      var app1 = new Vue({
+        el: "#app-1",
+        data: data
+      })
+
+      var app2 = new Vue({
+        el: "#app-2",
+        data: data,
+        methods: {
+          click(){
+            alert("弹出框");
+          }
+        },
+      })
+    
+    </script>
+  </body>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>条件渲染</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <div id="app-1">
+    <p v-if="awesome">Vue is awesome!</p>
+    <p v-else>Oh, no</p>
+
+     <!-- 因为v-if是一个指令，所以必须要依附在某个元素上，当我们想切换多个元素怎么办呢?使用<template>元素，在渲染时，<tmplate>是不会被渲染的 -->
+       <!-- v-else 或v-else-if 块必须紧跟v-if块，否则无法识别 -->
+  <template v-if="ok">
+      <h1>Title</h1>
+      <p>paragraph 1</p>
+      <p>paragraph 2</p>
+    </template>
+    <template v-else>
+        <h1>Title</h1>
+        <p>paragraph 3</p>
+        <p>paragraph 4</p>
+      </template>
+  </div>
+      <!-- 用key管理可复用 的元素 -->
+      <!-- 如app-2这个例子，当input元素没有设置key时，vue会默认认为该输入框的内容是可复用的，所以在切换登录方式时，
+      输入的内容没有清除 -->
+  <div id="app-2">
+    <template v-if="loginType == 'username'">
+      <label>User</label>
+      <input placeholder="Enter your username"/>
+    </template>
+    <template v-else>
+        <label>Email</label>
+        <input placeholder="Enter your email"/>
+    </template>
+  </div>
+    <!-- 但是这样总不是符合要求的，若要使这两个输入框完全独立，则可以使用key属性为输入框设置唯一标识，这样就可以在切换时清空内容 -->
+    <div id="app-3">
+        <template v-if="loginType == 'username'">
+          <label>User</label>
+          <input placeholder="Enter your username" :key="username-input"/>
+        </template>
+        <template v-else>
+            <label>Email</label>
+            <input placeholder="Enter your email" v-bind:key="email-input"/>
+        </template>
+  </div>
+ 
+
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        awesome: true,
+        ok: true
+      }
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: {
+        loginType: "username"
+      }
+    })
+
+    var app3 = new Vue({
+      el: "#app-3",
+      data: {
+        loginType: "username"
+      }
+    })
+  </script>
+</body>

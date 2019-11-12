@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>计算属性和侦听器</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+<!-- vue提供了watch选项实现一种更为通用的方法，来响应数据的变化，当需要在数据变化时执行异步或开销较大时的操作时，这种方式更为有效 -->
+
+<body>
+  <div id="watch-example">
+    <p>Ask a yes/no question:</p>
+    <input v-model="question">
+    <p> {{ answer }}</p>
+  </div>
+  <script type="text/javascript">
+    var watchExampleVM  = new Vue({
+      el: "#watch-example",
+      data: {
+        question: '',
+        answer: "I cannot give you an answer until you ask a question!"
+      },
+      watch: {
+        question: function (newQuestion, oldQuestion) {
+          //当question发生变化时，就调用这个方法
+          this.answer = "Waiting for you to stop typing... "
+          this.debouncedGetAnswer();
+        }
+      },
+      created: function() {
+        // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+        // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+        // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+        // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+        // 请参考：https://lodash.com/docs#debounce
+        this.debouncedGetAnswer = _.debounce(this.getAnswer,500);
+      },
+      methods: {
+        getAnswer:function(){
+          if(this.question.indexOf("?") == -1){
+            this.answer = "Questions usually contains a question mark, :)-";
+            return
+          }
+          this.answer = "thinking...";
+          var vm = this;
+          axios.get('https://yesno.wtf/api')
+            .then(function(response){
+              vm.answer = _.capitalize(response.data.answer);
+            })
+            .catch(function(error){
+                vm.answer = 'Error! Could not reach the API. ' + error
+            })
+        }
+      },
+
+    })
+  </script>
+</body>

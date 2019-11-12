@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>模板语法</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <div id="app-1">
+    <p>{{ a }}</p> 
+    <!--  这是一种方式 -->
+    <!-- <p><span v-html = 'b'></span></p> -->
+    <!--这是另外一种方式 ，这种方式会在domcument中多添加一层span标签，所以建议用上一种,v-html会对该标签 -->
+         <p><span v-html='b'></span></p>
+    <div v-bind:class="color">Test...</div>
+  </div>
+  <!-- vue不能直接使用mustache语法绑定html的特性，所以需要用到v-bind指令来绑定 -->
+  <div id="app-2">
+    <button v-bind:disabled="isButtonDisabled">Button</button>
+  </div>
+  <!-- //vue不仅提供了简单的属性键值绑定，也提供了对js表达式的绑定支持 -->
+  <div id="app-3">
+    <p>{{ number +1}}</p>
+    <p>{{ok? 'YES': 'NO'}}</p>
+    <p>{{message.split('').reverse().join('')}}</p> 
+  </div +v-bind:id="'list-'"+id></div>
+
+  </div>
+  <script type="text/javascript">
+    //插值，使用Mustache标签({{}})会被替代为绑定的数据对象中对应属性的值，但是注意，Mustache标签只能将属性值解析为文本字符串，
+    //而无法将其解析为html代码，若要将其解析为html代码需要使用v-html指令
+    var data = {
+      a: "台风来了",
+      b: "<span style='color:red'> this is red.</span>",
+      color: 'blue',
+      isButtonDisabled: true,
+      message: "1234567",
+      id: 234,
+      number:7,
+      ok : 1
+    };
+    var app1 = new Vue({
+      el: "#app-1",
+      data: data
+    })
+    var app2 = new Vue({
+      el: "#app-2",
+      data: data
+    })
+    var app3 = new Vue({
+      el: "#app-3",
+      data: data
+    })
+  
+  </script>
+  <style type="text/css">
+  .red{
+    color: red;
+  }
+  .blue{
+    color: blue;
+    font-size: 100px;
+  }
+  </style>
+</body>
+
+</html>

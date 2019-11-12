@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Class与Style绑定</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <div id="class-example" class="static" v-bind:class="{active: isActive,'text-danger': hasError}">
+    <p>绑定class</p>
+  </div>
+  <!-- 绑定的属性不用内联定义在模板里，还可以绑定一个对象 -->
+  <div id="class-example1" class="static" v-bind:class="classObject">
+    <p>绑定class</p>
+  </div>
+<!-- 绑定的class对象可以是一个计算属性 -->
+  <div id="class-example2" class="static" v-bind:class="classObject">
+      <p>绑定class</p>
+    </div>
+
+  <script type="text/javascript">
+    var vm = new Vue({
+      el: "#class-example",
+      data: {
+        isActive: true,
+        hasError: false
+      }
+    })
+
+    var vm1 = new Vue({
+      el: "#class-example1",
+      data: {
+        classObject: {
+          active: true,
+          'text-danger': true
+        }
+      }
+    })
+
+    var vm2 = new Vue({
+      el: "#class-example2",
+      data: {
+        isActive: true,
+        hasError: false
+      },
+      computed: {
+        classObject: function () {
+          return {
+            active: this.isActive && !this.hasError,
+            'text-danger': this.hasError && this.hasError.type === 'fatal'
+          }
+
+        }
+      }
+
+    })
+  </script>
+  <style type="text/css">
+    .static :active {
+      color: red;
+
+    }
+
+    .blue {
+      color: blue;
+      font-size: 100px;
+    }
+  </style>
+</body>

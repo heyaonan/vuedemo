@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>数据和方法</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <div id="app-1">
+    <p>{{ message }}</p>
+    <p>{{ a }}</p>
+  </div>
+
+  <div id="app-2">
+      <p>{{ foo }}</p>
+      <button v-bind:click = "foo == 'baz'">Change it</button>
+    </div>
+
+  <script type="text/javascript">
+    //数据对象
+    var data = {
+      message: "台风来了",
+      a: ""
+    };
+    //将数据对象添加到我们的Vue实例中
+    var app1 = new Vue({
+      el: "#app-1",
+      data: data
+    })
+    //使用实例中的属性，返回的是原数据中的字段
+    app1.message = data.message;
+    //当我们修改数据对象时，会响应到视图中，设置实例属性会影响到原数据
+    app1.message = "台风又来了";
+    //data.message = "台风又来了"
+
+    //反之亦然
+    data.message = "台风又又又来了";
+    //app1.message = "台风又又又来了"
+
+    //当数据改变时，视图会进行重渲染，值得注意的是只有当创建Vue实例时在data中存在的属性才是响应式的
+    data.a = "你好";//会报错，需要在创建vue实例时在data中声明该属性
+
+
+    //Object.freeze()方法会禁止修改现有属性，响应系统无法对其进行跟踪
+    var obj = {
+      foo: "bar"
+    }
+    Object.freeze(obj);
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: obj
+    })
+
+    //Vue实例还定义了一些实例属性和方法，为了和用户自定义的属性区分，将实例属性前加$
+    console.log(app2.$data === obj);
+    console.log(app2.$el === document.getElementById("app-2"));
+    console.log(app2.$data.foo === obj.foo);
+    //$watch是一i个VUe的实例方法，用于监控某个数据属性改变前后的值
+    
+    app1.$watch('a', function(newValue,oldValue){
+      console.log(newValue);
+      console.log(oldValue);
+
+    })
+    app1.a = "我不好";
+
+
+
+  </script>
+</body>
+
+</html>
