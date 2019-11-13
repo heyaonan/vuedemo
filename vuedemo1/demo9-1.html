@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>列表渲染</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<!-- v-for 指令基于一个数组来渲染列表，指令需要for item in items 形式的指令格式，其中items表示源数据数组，item表示代表
+被迭代元素的别名,也可以用of代替in，因为of更符合js的规范 -->
+
+<body>
+  <div id="app-1">
+    <ul>
+      <li v-for="item in items">
+        {{ item.message }}
+      </li>
+    </ul>
+  </div>
+  <!-- v-for 完整格式是v-for="(item,index) in items" :key= "index"
+ 其中index为被迭代元素的索引 -->
+  <div id="app-2">
+    <ul>
+      <li v-for="(item1,index) in item1s" :key="index">
+        {{parentMessage}} - {{index}} - {{ item1.message }}
+      </li>
+    </ul>
+  </div>
+  <!-- v-for指令也可以遍历对象中的所有属性，也可以提供第二个参数名为属性名，再加上第三个参数名为索引 -->
+  <div id="app-3">
+    <ul>
+      <li v-for="(value,name,index) in object">
+        {{index}}: {{name}} = {{value}}
+      </li>
+    </ul>
+  </div>
+
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        items: [
+          { message: "book" },
+          { message: "chart" },
+          { message: "thinkpad" }
+        ]
+      }
+
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: {
+        parentMessage: "parent",
+        item1s: [
+          { message: "book" },
+          { message: "chart" },
+          { message: "thinkpad" }
+        ]
+      }
+
+    })
+    var app3 = new Vue({
+      el: "#app-3",
+      data: {
+        object: {
+          name: "book",
+          description: "chart",
+          alias: "thinkpad"
+        }
+      }
+
+    })
+  </script>
+</body>

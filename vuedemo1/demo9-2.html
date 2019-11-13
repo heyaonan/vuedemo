@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>列表渲染</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+  <!-- 维护状态：
+    当Vue正在更新使用v-for渲染的列表元素时，他会默认原地更新，即直接覆盖原有位置元素，如果数据项的位置发生改变，Vue并不会
+  移动dom元素来匹配位置，而是就地更新每个元素，并确保他们的位置被正确渲染，
+  这种默认模式是高效的，但是只适用于不依赖子组件或者临时DOM状态的列表渲染的情况(例如表单输入值)
+
+    可以给Vue一个提示，以便它能够跟踪每个节点的身份，从而重用或重新排序现有的元素，需要为每个元素提供一个key属性-->
+    <div id="app-1">
+        <ul>
+          <li v-for="(value,name,index) in object" :key="name">
+            {{index}}: {{name}} = {{value}}
+          </li>
+        </ul>
+      </div>
+  <!-- 数组更新检测
+  1：变异方法(mutation method)
+  Vue将被侦听的数组的变异方法进行了包裹，所以他们也会触发视图更新，被包裹的方法有如下：
+  push() 添加
+  pop() 删除最后一个元素
+  shift() 删除第一个元素
+  unshift() 添加元素到数组开头
+  splice() 增删改元素
+  sort() 排序
+  reverse() 逆转
+  2： 替换数组
+      变异方法会改变原始数组，也有非变异方法，会新生成一个数组替换掉原来的数组，这些方法有filter()、concat() 和 slice()等
+      Vue 为了使得 DOM 元素得到最大范围的重用而实现了一些智能的启发式方法，所以用一个含有相同元素的数组去替换原来的数组
+      是非常高效的操作。
+  3: 注意事项，由于JavaScript的限制，Vue无法检测如下数组修改
+  1）当你直接利用索引设置一个索引项时，例如vm.items[indexOfItem] = newValue
+  2）当你修改数组的长度时，例如：vm.items.length = newLength
+  举个例子：
+  var vm = new Vue({
+  data: {
+    items: ['a', 'b', 'c']
+  }
+  })
+  vm.items[1] = 'x' // 不是响应性的
+  vm.items.length = 2 // 不是响应性的
+  对于第一类情况，以下两种方式可以实现和vm.items[indexOfItem] = newValue相同的效果，且可以在响应式系统中触发更新
+  方法一：Vue.set(vm.items,index,newValue)
+  方法二：vm.items.splice(indexOfItem, 1, newValue)
+  也可以使用Vue的实例方法Vue.$set
+
+  对于第二种情况，可以通过vm.items.splice(newLength)来解决
+  -->
+  <div id="app-2">
+      <ul>
+        <li v-for="item in items">
+          {{ item.message }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- 对象变更检测注意事项
+    由于JavaScript的限制，Vue不能检测对象属性的新增和删除
+    如例子app-3，可以使用Vue.set(object,propertyName,value)来添加响应式属性
+    或Vue的实例方法vm.$set()方法
+    若要添加多个属性，应该将属性封装在一个对象中，然后调用Object.assign()方法将两个对象合并，再赋值给data,所以当你想添加新的响应式属性，应该
+    vm.userProfile = Object.assign({}, vm.userProfile, {
+    age: 27,
+    favoriteColor: 'Vue Green'
+})
+    
+    -->
+    <div id="app-3">
+        <ul>
+          <li v-for="(value,name) in object">
+            {{ name }}: {{value}}
+          </li>
+        </ul>
+      </div>
+  
+
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        object: {
+          name: "book",
+          description: "chart",
+          alias: "thinkpad"
+        }
+      }
+
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: {
+        items: [
+          { message: "book" },
+          { message: "chart" },
+          { message: "thinkpad" }
+        ]
+      }
+
+    })
+    setInterval(() => {
+      app2.items.push({message: 1})
+    }, 5000);
+    app2.items.filter(function(item){
+      return item.message.match(/book/)
+    })
+    app2.items[1] = {message:"abc"};
+    Vue.set(app2.items,1,{message:"def"})
+    var app3 = new Vue({
+      el: "#app-3",
+      data: {
+        object:{
+          name: "heyaonan",
+        }
+      }
+    })
+    //name属性是响应式的
+    app3.age = 27; //不是响应式的
+    Vue.set(app3.object,"address","河南省济源市") //address属性是响应式的
+    app3.$set(app3.object, "email", "1049386140@qq.com")
+
+    app3.object = Object.assign({},app3.object,{tell: "15602269906",id: "122433232"})
+
+
+  </script>
+</body>

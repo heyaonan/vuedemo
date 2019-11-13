@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>表单输入绑定</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 你可以用 v-model 指令在表单 <input>、<textarea> 及 <select> 元素上创建双向数据绑定。它会根据控件类型自动选取正
+    确的方法来更新元素。尽管有些神奇，但 v-model 本质上不过是语法糖。它负责监听用户的输入事件以更新数据，并对一些极端场
+    景进行一些特殊处理。 
+
+    v-model 在内部为不同的输入元素使用不同的属性并抛出不同的事件：
+
+    text 和 textarea 元素使用 value 属性和 input 事件；
+    checkbox 和 radio 使用 checked 属性和 change 事件；
+    select 字段将 value 作为 prop 并将 change 作为事件。
+  
+    v-model 会忽略所有表单元素的 value、checked、selected 特性的初始值而总是将 Vue 实例的数据作为数据来源。你应该通过
+     JavaScript 在组件的 data 选项中声明初始值。
+  -->
+  
+  <div id="app-1">
+    <!-- 文本 -->
+   <input v-model="message" placeholder="edit me"/>
+   <span>Text : {{message}}<span>
+    <br>
+    <!-- 多行文本 -->
+    <span>Multiline message is:</span>
+    <p style="white-space:pre-line">{{textarea}}</p>
+    <textarea v-model="textarea" placeholder="add multiple lines"></textarea>
+    <!-- 复选框 -->
+    <input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">{{checked}}</label>
+    <!-- 多个复选框会放在一个数组中 -->
+    <div id = "app-2">
+        <input type="checkbox" id="apple" value="apple" v-model="checkedFrut">
+        <label for="apple">苹果</label>
+        <input type="checkbox" id="bnana" value="bnana" v-model="checkedFrut">
+        <label for="bnana">香蕉</label>
+        <input type="checkbox" id="orange" value="orange" v-model="checkedFrut">
+        <label for="orange">橘子</label>
+        <input type="checkbox" id="pear" value="pear" v-model="checkedFrut">
+        <label for="pear">梨子</label>
+        <br>
+        <span>Checked Frut: {{checkedFrut}}</span>
+    </div>
+    <!-- 单选框 -->
+    <div>
+        <input type="radio" id="one" value="One" v-model="picked">
+        <label for="one">One</label>
+        <br>
+        <input type="radio" id="two" value="Two" v-model="picked">
+        <label for="two">Two</label>
+        <br>
+        <span>Picked: {{ picked }}</span>
+      </div>
+
+      <!-- 选择框 -->
+      <div>
+          <select v-model="selected">
+            <option disabled value="">请选择</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+          </select>
+          <span>Selected: {{ selected }}</span>
+        </div>
+
+     <!-- 多选择框 -->
+     <div>
+       <select v-model="multipleSelected" multiple style="width: 50px;">
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+      </select>
+      <span>Selected: {{ multipleSelected }}</span>
+     </div>
+     <!-- 动态选择 -->
+     <div>
+       <select v-model="dycSelected">
+         <option v-for="(item, index) in items" :key="index" v-bind:value="item">
+           {{item.name}}
+         </option>
+       </select>
+       <span>Selected: {{ dycSelected.id }}</span>
+     </div>
+     <!-- .lazy修饰符，默认情况下v-model 在input输入框触发时与数据进行同步 ，可以使用.lazy转变为在触发change事件时同步数据-->
+     <input v-model.lazy="msg" >
+     <!-- .number -->
+     <input v-model.number="age" type="number">
+     {{age}}
+  </div>
+
+
+
+  <script type="text/javascript">
+
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        message:"",
+        textarea: "",
+        checked: false,
+        checkedFrut: [],
+        picked:"",
+        selected: "A",
+        multipleSelected: [],
+        dycSelected: "",
+        msg: "",
+        age: 0,
+        items: [
+          {id: "apple",name: "苹果"},
+          {id: "bnana",name: "香蕉"},
+          {id: "pear",name: "梨子"},
+          {id: "orange",name: "橘子"}
+        ]
+      },
+    })
+
+
+  </script>
+</body>

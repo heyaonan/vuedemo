@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>列表渲染</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 如果想要显示一个数组过滤或排序后的版本，又不改变原来数组，此时，可以使用计算属性来返回过滤或排序后的数组 -->
+  <div id="app-1">
+    <ul>
+      <li v-for="n in filterNumbers">
+        {{ n }}
+      </li>
+    </ul>
+  </div>
+  <!-- 在计算属性不适用的情况下，例如在一个嵌套的v-for循环中，可以使用一个方法 -->
+  <div id="app-2">
+    <ul>
+      <li v-for="n in event(numbers)">
+        {{ n }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- v-for也可以接受整数 ，在这种情况或他会把模板重复设置的次数-->
+  <div id="app-3">
+     <span v-for="n in 10">{{ n }}</span>
+    </div>
+
+
+  <script type="text/javascript">
+
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        numbers: [1, 2, 3, 4, 5, 6]
+      },
+      computed: {
+        filterNumbers: function () {
+          return this.numbers.filter(function (number) {
+            return number % 2 == 0
+          })
+        }
+      },
+
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: {
+        numbers: [1, 2, 3, 4, 5, 6]
+      },
+      methods: {
+        event: function (numbers) {
+          return numbers.filter(function (number) {
+            return number % 2 == 0
+          })}
+      }
+    })
+
+    var app3 = new Vue({
+      el: "#app-3",
+      data: {
+      }
+    })
+  </script>
+</body>
