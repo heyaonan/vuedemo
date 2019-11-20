@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>组件基础</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 监听子组件事件
+  Vue实例提供了一个自定义的事件系统来处组件的事件
+  1：在调用组件时使用v-on来监听子组件的任意事件 -->
+
+  <div id="app-1">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <div v-for="post in posts" :key="post.id" >
+        <blog-post v-bind:blog="post" v-on:enlarge-text ="postFontSize += 0.1"></blog-post>
+      </div>
+    </div>
+  </div>
+  <!-- 2:使用事件抛出一个值
+  有时候使用事件来抛出一个值是非常有用的，例如我们让组件blog-post 自己决定每次字体放大多少，可以使用$emit的第二个参数
+  然后在父级组件通过$event来接受子组件的抛出值，如果在父级组件中处理这个事件的是一个方法，name这个值会作为第一个参数
+传入该方法-->
+  <div id="app-2">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <div v-for="post in posts" :key="post.id" >
+        <blog-post2 v-bind:blog="post" v-on:enlarge-text ="enlargeText"></blog-post2>
+      </div>
+    </div>
+  </div>
+  <!-- 在组件上使用v-model
+  自定义事件也可以用于创建支持v-model的自定义输入组件
+  <input v-model="searchText"/>
+  等价于
+   <input
+   v-bind:value="searchText" 
+   v-on:input = "searchText = $event.target.value">
+   当用在组件上时,应该是这样的
+ <custom-input 
+   v-bind:value="searchText" 
+   v-on:input = "searchText = $event"
+   ></custom-input>
+   要想使这个组件正常工作，这个组件内的<input>必须包括
+   1:将其value属性绑定到一个名叫value的prop上，
+   2：在其input事件触发时，将新值通过自定义的input事件抛出去
+   -->
+   <div id="app-3">
+    名字： <custom-input v-model="searchText"></custom-input>
+    name：<input v-model="searchText">
+   </div>
+  
+  
+ 
+ <script type="text/javascript">
+    Vue.component('blog-post', {
+      props: ['blog'],
+      template: `<div><h3>{{ blog.id }}: {{ blog.title }}</h3><span>{{ blog.content}}</span><br><button v-on:click="$emit('enlarge-text')">Enlarge text</button></div>`
+    })
+
+    Vue.component('blog-post2', {
+      props: ['blog'],
+      template: `<div><h3>{{ blog.id }}: {{ blog.title }}</h3><span>{{ blog.content}}</span><br><button v-on:click="$emit('enlarge-text',0.1)">Enlarge text</button></div>`
+    })
+
+    Vue.component('custom-input',{
+      props: ['value'],
+      template:`
+      <input v-bind:value="value"
+      v-on:input="$emit('input',$event.target.value)">
+      `
+    })
+
+
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        postFontSize: 1,
+        posts: [
+          { id: 1, title: "My journey with Vue", content: "asdsssssssssssssssssssssssss" },
+          { id: 2, title: "My journey with Rect", content: "sdfasdfsfwewwwwwwwwwwwwwwwww" },
+          { id: 3, title: "My journey with Angular", content: "fdshtyjjhhhhhhhhhhhhhhhhh" }
+        ]
+      },
+
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data: {
+        postFontSize: 1,
+        posts: [
+          { id: 1, title: "My journey with Vue", content: "asdsssssssssssssssssssssssss" },
+          { id: 2, title: "My journey with Rect", content: "sdfasdfsfwewwwwwwwwwwwwwwwww" },
+          { id: 3, title: "My journey with Angular", content: "fdshtyjjhhhhhhhhhhhhhhhhh" }
+        ]
+      },
+      methods: {
+        enlargeText: function(enlargeAmount){
+          this.postFontSize +=enlargeAmount;
+
+        }
+      },
+
+    })
+
+    var app3 = new Vue({
+      el: "#app-3",
+      data: {
+      searchText: "和要男"
+      },
+
+    })
+
+
+
+    
+
+  </script>
+</body>

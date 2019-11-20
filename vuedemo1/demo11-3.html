@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>深入了解组件</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+
+  <div id="app-1">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <div v-for="post in posts" :key="post.id" >
+        <blog-post v-bind:blog="post" v-on:enlarge-text ="postFontSize +=0.1"></blog-post>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var blogpost = {
+      props: ['blog'],
+      template: `<div><h3>{{ blog.id }}: {{ blog.title }}</h3><span>{{ blog.content}}</span><br><button v-on:click="$emit('enlarge-text')">Enlarge text</button></div>`
+    };
+
+    var app1 = new Vue({
+      el: "#app-1",
+      data: {
+        postFontSize: 1,
+        posts: [
+          { id: 1, title: "My journey with Vue", content: "asdsssssssssssssssssssssssss" },
+          { id: 2, title: "My journey with Rect", content: "sdfasdfsfwewwwwwwwwwwwwwwwww" },
+          { id: 3, title: "My journey with Angular", content: "fdshtyjjhhhhhhhhhhhhhhhhh" }
+        ]
+      },
+      components:{
+        "blog-post": blogpost
+      }
+
+    })
+
+  </script>
+</body>

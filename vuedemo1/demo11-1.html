@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>组件基础</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 简单的组件例子，组件是可以复用的Vue实例，声明组件时要指定该组件名称，我们通过new Vue创建VUE实例时，将组件作为
+  自定义元素来使用
+  和new Vue的Vue实例不同的是，组件的data选项必须是一个函数，这样可以保证组件在复用时维护被返回对象的独有的拷贝，即独立维护自己的那一份数据
+  ，这点应该和Vue根实例区别
+
+  在组件使用之前，我们需要对组件进行注册 ，分为全局注册和局部注册方式，全局注册就是通过Vue.component来注册，
+-->
+  <div id="app-1">
+    <button-count></button-count>
+  </div>
+  <!-- 通过prop向子组件传递数据：prop是你可以在组件上注册的一些自定义特性，当一个值传递给prop的特性时，他就变成了
+  那个组件实例的属性，为了给博文组件传递一个博文标题，我们可以用props选项将其包含在该组件可以接受的prop列表中
+  
+  如app-2例所示，你可以吧title属性当做blog-post组件的一个特性，并在组件内使用他，还可以通过v-bind指令动态绑定这个属性
+-->
+  <div id="app-2">
+      <blog-post v-bind:title="title"></blog-post>
+    </div>
+
+  <!-- 编写一个动态的展示blog的列表的组件，在该例子中，我们对blog-post定义了一个blog的属性，这个属性代表的是一篇
+  博客对象，该对象可以包含很多属性，例如标题，内容，日期，等等，在使用组件时，通过v-bind绑定一个blog对象，并在组件
+模板中展示需要展示的信息。
+有一点需要注意，当我们在组件模板(template) 中使用多个标签元素时，可能会报错：单一组件只能包含一个根元素，所以，
+需要我们创建一个父元素将子元素全部包裹起来-->
+  <div id="app-3">
+    <div v-for="post in posts" :key="post.id">
+      <blog-post v-bind:blog="post"></blog-post>
+    </div>
+  </div>
+  <script type="text/javascript">
+  Vue.component('button-count',{
+    data() {
+      return {
+        count: 0
+      }
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times. </button>'
+  })
+  var app1 = new Vue({
+    el: "#app-1",
+  })
+
+
+  Vue.component('blog-post',{
+    props: ['title'],
+    template: '<h3>{{ title }}</h3>'
+  })
+  var app2 = new Vue({
+    el: "#app-2",
+    data: {
+        title: "My journey with Vue"
+    },
+  })
+
+  Vue.component('blog-post',{
+    props: ['blog'],
+    template: '<div><h3>{{ blog.id }}: {{ blog.title }}</h3><span>{{ blog.content}}</span></div>'
+  })
+
+  var app3 = new Vue({
+    el: "#app-3",
+    data: {
+      posts: [
+        {id: 1,title: "My journey with Vue",content:"asdsssssssssssssssssssssssss"},
+        {id: 2,title: "My journey with Rect",content:"sdfasdfsfwewwwwwwwwwwwwwwwww"},
+        {id: 3,title: "My journey with Angular",content:"fdshtyjjhhhhhhhhhhhhhhhhh"}
+      ]
+    },
+  
+  })
+
+  </script>
+</body>
