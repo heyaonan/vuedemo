@@ -52,6 +52,24 @@
     名字： <custom-input v-model="searchText"></custom-input>
     name：<input v-model="searchText">
    </div>
+   <!-- 通过插槽分发内容 
+  vue自定义的元素<slot>可以向组件传入类似于html的内容
+  -->
+  <div id="app-4">
+    <alert-box>
+    {{ message}}
+    </alert-box>
+  </div>
+
+  <!-- 动态组件 -->
+
+  <div id="app-5">
+    <button @click="toshow">点击让子组件显示</button>
+    <component v-bind:is="which_to_show"></component>
+   </div>
+ 
+
+
   
   
  
@@ -72,6 +90,13 @@
       <input v-bind:value="value"
       v-on:input="$emit('input',$event.target.value)">
       `
+    })
+
+    Vue.component('alert-box',{
+      template: `<div>
+        <strong>ERROR!</strong>
+        <slot></slot>
+      </div>`
     })
 
 
@@ -111,6 +136,14 @@
       el: "#app-3",
       data: {
       searchText: "和要男"
+      },
+
+    })
+
+    var app4 = new Vue({
+      el: "#app-4",
+      data: {
+        message: "我回来了"
       },
 
     })
