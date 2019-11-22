@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>深入了解组件</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<!-- 全局注册 -->
+<!-- 使用Vue.component注册的组件我们称之为全局注册，全局注册的组件可以用在任何新创建的Vue根实例的模板中-->
+<div id="app-1">
+  <component-1 v-bind:message="message1"></component-1>
+  <component-2 v-bind:message="message2"></component-2>
+  <component-3 v-bind:message="message3"></component-3>
+  <component-4 v-bind:message="message4"> </component-4>
+  <component-5 v-bind:message="message5"></component-5>
+</div>
+<!-- 局部注册 -->
+<!-- 全局注册的组件意味着即使你不在使用某个组件了，但是这个组件还是会包含在构建结果中，会造成用户下载JavaScript过大
+在这种情况下，可以使用一个普通的javascript对象来定义组件然后在components选项中定义你想要的组件，其中属性名即为你自定义元素的
+名称，属性值就是这个组件的选项对象
+ -->
+
+<body>
+
+  <script type="text/javascript">
+  // 全局注册的组件可以在子组件中调用
+  Vue.component('component-1',{
+    props:["message"],
+    template: `<div><strong>{{ message }}</strong><br> <component-2 v-bind:message="message"></component-2></div>`
+  })
+  Vue.component('component-2',{
+    props:["message"],
+    template: `<strong>{{ message }}</strong>`
+  })
+  Vue.component('component-3',{
+    props:["message"],
+    template: `<strong>{{ message }}</strong>`
+  })
+
+  var component4 = {props:["message"],template:`<div>{{message}}</div>`};
+  // 局部注册的组件不能在其子组件中使用，如下写法会报错
+  //var component5 = {props:["message"],template:`<div>{{message}}<br> <component-4 v-bind:message="message"></component-4></div>`};
+  //要想在子组件中调用局部组件，需要在组件定义时定义子组件
+  var component5 = {props:["message"],components:{"component-4": component4},template:`<div>{{message}}<br> <component-4 v-bind:message="message"></component-4></div>`};
+
+  var app1 =  new Vue({
+    el: "#app-1",
+    data() {
+      return {
+        message1: "这是message-1",
+        message2: "这是message-2",
+        message3: "这是message-3",
+        message4: "这是message-4",
+        message5: "这是message-5"
+      }
+    },
+    components:{
+      "component-4":component4,
+      "component-5":component5
+    }
+  })
+  </script>
+</body>

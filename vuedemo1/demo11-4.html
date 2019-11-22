@@ -31,18 +31,20 @@
     var first = { template: "<div>这是第一个组件</div>" };
     var second = { template: "<div>这是第二个组件</div>" };
     var third = { template: "<div>这是第三个组件</div>" };
+    var four = { template: "<div>这是第四个组件</div>" };
     var app1 = new Vue({
       el: "#app-1",
       components: {
         first: first,
         second: second,
-        third: third
+        third: third,
+        four: four,
       },
       methods: {
         toshow: function (index) {
-          console.log(index);
-          var arr = ["first", "second", "third", ""];
-          this.which_to_show = arr[index];
+          let arr = this.btnGroup;
+          console.log(arr.length);
+          this.which_to_show = arr[index].name;
         }
       },
       data() {
