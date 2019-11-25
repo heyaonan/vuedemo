@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>深入了解组件</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<!-- Prop的大小写 
+html中的特姓名是不区分大小写的，大写会默认转换成小写，所以当使用Dom模板时，驼峰命名法的Prop名应该使用相对应的
+横线分割法代替
+使用字符串模板时不受此限制。这一点我还没有验证过，不知道怎么验证-->
+ <div id="app-1">
+  <blog-post v-bind:post-title="postTitle"></blog-post>
+ </div>
+ <!-- Prop的类型
+目前为止我们传入的Prop数组都是字符串类型，若对某个prop属性的类型有要求，可以以对象形式列出所有的prop,这些
+属性的名称和值都以属性的名称和类型代替 例如
+props: {
+  title: String,
+  likes: Number,
+  isPublished: Boolean,
+  commentIds: Array,
+  author: Object,
+  callback: Function,
+  contactsPromise: Promise // or any other constructor
+}-->
+
+<!-- prop属性可以传静态值和动态值，但是不管是静态值还是动态值，都需要使用v-bind:prop名这种格式来告诉
+vue，这是一个JavaScript的表达式 ，当prop属性代表的是一个对象时，可以使用v-bind不加参数名，但是此时
+组件内声明的props属性必须是对象的属性而不是对象本身-->
+<div id="app-2">
+  <login-post v-bind="user"></login-post>
+ </div>
+<!-- 单向数据流
+所有的子组件种的prop都会和父pro之间形成一个单向下行绑定:父级prop的更新会向下流动到子组件中，反过来
+却不行，这样可以防止子组件的意外改变影响到父组件的状态，从而导致你的应用的数据流向难以理解。
+额外的，每次父级组件发生更新时，子组件中的所有prop都会刷新为最新的值，这意味着你不应该在子组件内部改变pro，如果，你这样做了
+Vue挥着浏览器控制台发出警告 -->
+<!-- 有两种比较常见的试图改变一个prop的情况 -->
+<!-- 1：这个prop用来传递一个初始值；这个子组件接下来希望将其作为一个本地的prop数据来使用。
+此时，最好是定义一个本地的data属性并将这个prop作为其初始值 
+props: ['initialCounter'],
+data: function () {
+  return {
+    counter: this.initialCounter
+  }
+}
+
+2：这个prop以一种原始的值传入且需要进行转换
+此时最好使用这个prop的值定义一个计算属性：
+props: ['size'],
+computed: {
+  normalizedSize: function () {
+    return this.size.trim().toLowerCase()
+  }
+}
+
+注意：
+JavaScript中的对象和数组是通过引用传入的，在子组件中对对象或者数组的操作都有可能会改变父组件的状态
+-->
+<body>
+
+  <script type="text/javascript">
+  Vue.component('blog-post',{
+    props:['postTitle'],
+    template: `<h3>{{ postTitle }}</h3>`
+  })
+  Vue.component('login-post',{
+    props: {
+      name: String,
+      address: String
+    },
+    template: `<div><h3>{{ name }}</h3><h3>{{ address }}</h3></div>`
+  })
+
+  
+  var app1 = new Vue({
+    el: "#app-1",
+    data() {
+      return {
+        postTitle: "如何学好Vue"
+      }
+    },
+  })
+
+  var app2 = new Vue({
+    el: "#app-2",
+    data() {
+      return {
+        user:{
+          name: "和要男",
+          address: "河南省济源市"
+        }
+      }
+    },
+  })
+  </script>
+</body>
