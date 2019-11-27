@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>深入了解组件</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 自定义事件 -->
+  <!-- 1：事件名
+  不同于组件和prop,事件名不存在任何自动化的大小写转换，而是触发的事件名需要完全匹配监听这个事件所用的形成 -->
+  <!-- v-model指令 -->
+  <!-- vue中在使用<input>或者<textarea>等表单元素时，会通过v-model指令与这些表单标签进行双向数据绑定，
+    他会更新不同的控件类型调用不同的方法来更新数据,v-model的本质是一个语法糖，
+    <input v-model="test"> 的本质是 <input :value ="test" @input = "test = $event.target.value">
+    即监听input事件，并将value值赋值给test，再讲value属性绑定到test来实现数据绑定，
+    这里需要强调一点，v-model不仅可以给input赋值，也可以获取input中的数据，而且还是实时的，你可以在
+    下边添加<p>{{test}}</p>来实时打印出输入框里的信息
+     -->
+  <div id="app-1">
+    输入框：
+    <input v-model="test">
+    <p>{{test}}</p>
+  </div>
+
+  <!-- 在单选框，下拉框和复选框中，value绑定着不同的方法，其中要注意的是，在复选框中，value绑定的data数据应该为一个数组 
+  下边例子中，label标签中的for属性值和复选框中的id的值一致，这样可以保证在点击label时也会勾选该选项-->
+  <div id="app-2">
+    <input type="checkbox" id="one" value="value_one" v-model.lazy="checkedNames">
+    <label for="one">选项一</label>
+    <input type="checkbox" id="two" value="value_two" v-model.lazy="checkedNames">
+    <label for="two">选项二</label>
+    <input type="checkbox" id="three" value="value_three" v-model.lazy="checkedNames">
+    <label for="three">选项三</label>
+    <br>
+    <span>Checked names: {{ checkedNames }}</span>
+  </div>
+  <!-- 自定义组件中的v-model -->
+  <!-- 一个组件上的v-mode默认会使用value这个prop和input这个事件，但是像单选框或者复选框等输入控件可能
+  会将value这个prop用作不同的用途，例如在复选框中，value的值在客户端永远看不到，但是在服务端接受的却是这个value的值
+  所以若要避免这种冲突，可以使用model选项 如下所示的base-checkbox组件,注意，lovingvalue的值要通过
+  ipt这个prop传入子组件，所以在子组件中定义ipt这个prop是不可缺少的
+-->
+  <div id="app-3">
+    <base-checkbox v-model="lovingvalue"></base-checkbox>
+    <label>苹果</label>
+    <base-checkbox v-model="lovingvalue"></base-checkbox>
+    <label>香蕉</label>
+    <base-checkbox v-model="lovingvalue"></base-checkbox>
+    <label>梨子</label>
+    <span>{{lovingvalue}}</span>
+  </div>
+
+  <!-- 将原生事件绑定到组件上
+  例如当我们想在base-input组件上监听原生事件可以使用v-on的.native修饰符，例如
+<base-input v-on:focus.native = "onFocus"></base-input> 
+这种方式在很多时候是很方便的，但是在某些情况下，是不可行的，例如
+<label>
+  {{label}}
+  <input v-bind="$attrs" v-bind:value="value" v-on:input="$emit('input',$event.target.value)" >
+</label>
+所示，当组件根元素不是<input>标签时，想在父组件上通过v-on:focus.native ="onFocus"来监听input标签的事件时，是无法监听到的,
+要解决这个问题，vue提供了一个实例属性$listeners,他是一个对象，包含了作用在这个组件上的所有监听器，例如
+{
+  focus:function (event){/*.. ..*/},
+  input:function (event){/*.. ..*/}
+}
+有了这个$listeners属性，我们可以与v-on="$listeners"配合，将所有的监听器事件指向这个组件的特定子元素，对于当前这个base-input组件
+我们可以进行如下修改
+
+-->
+  <div id="app-4">
+    <base-input v-on:focus="onFocus" v-on:input="onInput" v-model="value" label="自定义输入框:"></base-input>
+    <span>{{value}}</span>
+  </div>
+
+  <script type="text/javascript">
+    Vue.component('base-checkbox', {
+      model: {
+        prop: "ipt",
+        event: "change"
+      },
+      props: {
+        ipt: Boolean
+      },
+      template: `<div><input type="checkbox" :checked="ipt" @change="$emit('change',$event.target.checked)"></div>`
+    })
+
+    Vue.component('base-input', {
+      inheritAttrs: false,
+      props: ['value', 'label'],
+      template: `
+        <label>
+        {{label}}
+        <input v-bind="$attrs" v-bind:value="value" v-on="inputListeners" >
+        </label>`,
+      computed: {
+        inputListeners: function () {
+          var vm = this;
+          //这个Object.assign用于将所有的对象组成一个新对象
+          return Object.assign({},
+            //获取父组件作用到子组件的所有监听器
+            this.$listeners,
+            //然后我们自定义监听器事件，或重写监听器行为
+            {
+              //这里确保可以和v-model配合工作
+              input: function (event) {
+
+                vm.$emit('input', event.target.value)
+              },
+              //这里确保可以和v-model配合工作
+              focus: function (event) {
+
+                vm.$emit('focus', "")
+              }
+            }
+          )
+        }
+      },
+    })
+    var app = new Vue({
+      el: "#app-1",
+      data() {
+        return {
+          test: "测试",
+        }
+      },
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data() {
+        return {
+          checkedNames: []
+        }
+      },
+    })
+
+    var app3 = new Vue({
+      el: "#app-3",
+      data() {
+        return {
+          lovingvalue: false
+        }
+      },
+    })
+
+    var app4 = new Vue({
+      el: "#app-4",
+      data() {
+        return {
+          value: ''
+        }
+      },
+      methods: {
+        onFocus: function (event) {
+          console.log(event);
+        },
+        onInput: function (val) {
+          console.log(val);
+        }
+      },
+    })
+  </script>
+</body>

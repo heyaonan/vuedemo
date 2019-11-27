@@ -61,6 +61,16 @@ computed: {
 注意：
 JavaScript中的对象和数组是通过引用传入的，在子组件中对对象或者数组的操作都有可能会改变父组件的状态
 -->
+
+<!-- Prop验证 -->
+<!-- 我们可以为组件的prop指定验证要求，例如我们已知某个prop属性的类型，若没有满足，则vue会在浏览器控制台
+打印出警告信息，这在开发会用到别人的组件时非常有用 -->
+<!-- 
+  可以为props提供一个带验证需求的对象，而不是一个字符串数组
+  注意，这些prop会在组件实例创建之前验证，所以实例的属性(例如data,computed等)都无法在default或者validator中使用
+ -->
+
+ <!-- 非Prop的特性，该例子清参考项目vuedemo2中的ParentDom.vue例子 -->
 <body>
 
   <script type="text/javascript">
@@ -75,6 +85,39 @@ JavaScript中的对象和数组是通过引用传入的，在子组件中对对�
     },
     template: `<div><h3>{{ name }}</h3><h3>{{ address }}</h3></div>`
   })
+
+  Vue.component('my-component',{
+    props: {
+      user: Person,
+      bookCount: {
+        type:Number,
+        default: 0
+      },
+      isVIP: Boolean,
+      tell:{
+        type:String,
+        required: true
+      },
+      books:{
+        type: Array,
+        reauired: true
+      },
+      //自定义验证函数
+      payStatus:{
+        validator:function(value){
+          return ["paid","fail","arrearage"]
+        }
+      }
+      
+
+    },
+    template: `<div><h3>{{ user.firstName+" "+user.lastName }}</h3><h3>是否是会员:{{ isVIP }}</h3></div>`
+  })
+
+  function Person(firstName,lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
 
   
   var app1 = new Vue({
