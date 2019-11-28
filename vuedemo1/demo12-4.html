@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>深入了解组件</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+
+<body>
+  <!-- 插槽 -->
+  <!-- Vue实现了一套内容分发的api，<slot>标签作为承载内容分发的接口 -->
+  <div id="app-1">
+    <navigation-link v-bind:url="parentUrl">百度一下,{{user.name}},就知道</navigation-link>
+  </div>
+  <!-- 如上例所示，当组件被渲染时，<slot></slot>会被替换为"百度一下，你就知道“在组件模板中，你可以写任何希望分发到子组件的
+  插槽中去，包括html代码或其他组件，如果<navigation-link>组件中没有包含任何<slot>标签，则组件的起始标签和截止标签中的所有内容
+    会被抛弃，
+  记住一条，父级模板里的内容都是在父级作用域编译的，子级模板的内容都是在子级作用域编译，如上例中，{{user.name}}是在父模板中定义
+则它的作用域就是父级作用域，他可以调用父级中的所有数据，但是他不能调用<navigation-link>组件里的数据，例如url，他是访问不了的 -->
+
+  <!-- 后备内容 -->
+  <!-- 所谓后备内容，其实就是默认内容，当我们并没有向组件内的<slot></slot>传入内容是，可以给他设置一个默认值，当向
+  <slot>传入内容后，会覆盖掉这个默认值，这在很多时候是很有用的，例如如下例子 -->
+  <div id="app-2">
+    <submit-button>提交</submit-button>
+  </div>
+
+  <!-- 具名插槽 -->
+  <!-- 有时候我们在组件内使用多个插槽，如何在父组件中向子组件的插槽中填入对应的内容呢，此时可以使用带有名称的插槽 -->
+  <!-- 例如我们写了模板如下的一个组件可以使用<slot>的name属性来绑定父组件传入进来的指定名称的插槽的内容
+    在父组件中，使用v-slot:插槽名向指定名称的插槽插入内容，其实没有设置name属性的插槽隐含的名称为default -->
+  <div id="app-3">
+    <h1>具名插槽</h1>
+    <base-layout>
+      <template v-slot:header>
+        <h3>如何学好vue</h3>
+      </template>
+
+      <p>1:现将官网的例子敲一遍</p>
+      <p>2:自己完成一个完整的应用</p>
+
+      <template v-slot:footer>
+        <h3>总结</h3>
+      </template>
+    </base-layout>
+  </div>
+
+  <!-- 作用域插槽 -->
+  <!-- 有时候插槽访问子组件内才有的数据时非常有用的，例如下边这个current-user组件的例子，我们在slot插槽内设置后备内容
+  是用户的firstname,当我们在父组件中使用插槽插入内容时，希望将插槽内容设置为用户的lastname，因为父组件中插槽无法访问
+组件内的数据，组件内的<slot>元素上绑定了 一个user属性，这个被称为插槽prop,在父组件中，可以给v-slot带一个值来来定义这个
+  插槽prop的名称，例如下边我们使用slotProps来定义所有的插槽pro对象，然后使用slotProps.user.lastname就可以访问子组件内
+的user的lastname属性-->
+  <div id="app-4">
+    <current-user>
+      <template v-slot:default="slotProps">
+        {{slotProps.user.lastname}}
+      </template>
+    </current-user>
+  </div>
+  <!-- 1：独占插槽的默认写法
+  如上边例子，假如组件内只有一个默认插槽时，组件的标签可以作为组件的模板，此时可以将v-slot写在标签内如下所示：
+  <current-user v-slot:default = "slotProps">
+        {{slotProps.user.lastname}}
+    </current-user>
+    2：针对1情况，还有更简单的写法，如果是默认插槽，可以省略默认插槽名称，写成v-slot = "slotProps"
+    但是具名插槽和默认插槽时不可混用的，当组件内同事存在具名插槽和默认插槽是，应该严格将每个插槽的内容写在<template>模板中
+      
+  -->
+
+  <!-- 解构插槽prop
+  上述例子中我们使用slotProps来表示插槽prop的所有对象，这个slotProps的实际值应该是
+  slotProps={user:{lastname:"老五",firstname:"王"}},这个slotProps可以是一个解构对象，在支持的环境下(例如单文件组件或者现代浏览器)，
+  我们可以直接传入一个结构对象表示具体的插槽prop,例如传入{user},则上述例子变成如下所示:
+<current-user v-slot:default = "{user}">
+        {{user.lastname}}
+    </current-user>
+    这样看起来比较简洁明了，而且还可以将这个插槽prop自定义名称例如改成v-slot:default = "{user：person}",
+    甚至设置后备内容，来避免出现undifined的情况:v-slot:default = "{user：{lastname:"小明"}"
+  -->
+
+  <!-- 动态插槽名
+  可以将动态指令参数定义在v-slot上，来动态定义插槽名，如下
+  <current-user v-slot:[dynamicSlotName]>
+        {{user.lastname}}
+    </current-user>
+  -->
+
+  <!-- 具名插槽的缩写
+  只有在插槽有名字的情况下，可以将v-slot:名称缩写为#名称，例如上例 <base-layout>组件可以改成成如下
+    <base-layout>
+      <template #header>
+        <h3>如何学好vue</h3>
+      </template>
+
+      <p>1:现将官网的例子敲一遍</p>
+      <p>2:自己完成一个完整的应用</p>
+
+      <template #footer>
+        <h3>总结</h3>
+      </template>
+    </base-layout>
+    请注意默认插槽要想缩写，也必须写成#default，如下是错误的
+    <current-user #= "{user}">
+        {{user.lastname}}
+    </current-user>
+  -->
+  <script>
+    var navigationLink = { props: ['url'], template: `<a v-bind:href="url"><slot></slot></a>` };
+    var submitButton = { template: `<button type="submit"><slot>Submit</slot></button>` };
+    var baselayout = {
+      template: `
+        <div id="container">
+          <header>
+              <slot name="header"></slot>
+            </header>
+            <main>
+              <slot></slot>
+            </main>
+            <footer>
+              <slot name="footer"></slot>
+            </footer>
+          </div>
+      `}
+
+    var currentUser = {
+      template: `<div> 用户: <slot v-bind:user = "user"> {{user.firstname}}</slot></div>`,
+      data() {
+        return {
+          user: {
+            firstname: "和",
+            lastname: "要男"
+          }
+        }
+      },
+    }
+    var app1 = new Vue({
+      el: "#app-1",
+      components: {
+        "navigation-link": navigationLink,
+
+      },
+      data() {
+        return {
+          parentUrl: "http://www.baidu.com",
+          user: {
+            name: "你们"
+          }
+        }
+      },
+
+    })
+    var app2 = new Vue({
+      el: "#app-2",
+      components: {
+        "submit-button": submitButton
+      }
+    })
+
+    var app3 = new Vue({
+      el: "#app-3",
+      components: {
+        "base-layout": baselayout
+      }
+    })
+
+    var app4 = new Vue({
+      el: "#app-4",
+      components: {
+        "current-user": currentUser
+      }
+    })
+  </script>
+</body>
