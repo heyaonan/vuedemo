@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>进入/离开&列表过滤</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+  <!-- 单元素/组件的过滤 -->
+  <!-- vue提供了transition的封装组件，在下列情形中，可以给任何元素和组件添加移入和离开过渡
+  1：条件渲染(用v-if)
+  2: 条件展示(用v-show)
+  3:动态组件
+  4：组件根节点 
+  如下是一个例子
+-->
+  <div id="app-1">
+    <button v-on:click="show = !show">
+      Toggle
+    </button>
+    <transition name="fade">
+      <span v-if="show">hello</span>
+    </transition>
+  </div>
+  <!-- 在这个例子中，我们使用了transition来封装组件，并实现了移入和离开的功能，接下来我们仔细看一下这个例子中的概念
+  1：过渡的类名 
+    在进入/离开组件过程中，有6个class进行切换
+    v-enter:定义进入过渡的初始状态，在元素被插入之前生效，在元素被插入之后的下一帧失效
+    v-enter-active:定义进入过渡生效时的状态，该状态包含了进入过渡的初始状态和结束状态，在元素被插入之前生效，可以用于定义过渡的过程时间，延迟和曲线函数
+    v-enter-to:定义进入过渡结束时的状态 //vue2.1.8版本新增
+    v-leave:定义离开过渡的初始状态
+    v-leave-active:定义离开过渡生效时的状态
+    v-leave-to:定义离开过渡结束时的状态 //vue2.1.8版本新增
+    对于这些在过渡中切换的类名来说，如果你使用的是一个没有名字的transition,则类名默认以v-开头，
+    若定义了transition的名字，则以 名字-开头
+
+-->
+  <!-- css过渡 -->
+  <div id="app-2">
+    <button @click="show = !show">
+      Toggle render
+    </button>
+    <transition name="slide-fade">
+      <p v-if="show">hello</p>
+    </transition>
+  </div>
+  <!-- css动画 
+  CSS 动画用法同 CSS 过渡，区别是在动画中 v-enter 类名在节点插入 DOM 后不会立即删除，而是在 animationend 事件触发时删除。-->
+  <div id="app-3">
+    <button @click="show = !show">Toggle show</button>
+    <transition name="bounce">
+      <p v-if="show">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis enim libero, at lacinia
+        diam fermentum id. Pellentesque habitant morbi tristique senectus et netus.</p>
+    </transition>
+  </div>
+
+  <!-- 自定义过渡的类名
+  我们可以根据以下属性来自定义过渡的类名
+  enter-class
+  enter-active-class
+  enter-to-class (2.1.8+)
+  leave-class
+  leave-active-class
+  leave-to-class (2.1.8+)
+  他们的优先级高于普通的类名，这对于将vue的过渡系统和其他的第三方css动画库，例如Animate.css结合使用时是非常方便的
+  如下是一个例子
+-->
+  <link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+
+  <div id="app-4">
+    <button @click="show = !show">
+      Toggle render
+    </button>
+    <transition name="custom-classes-transition" enter-active-class="animated tada"
+      leave-active-class="animated bounceOutRight">
+      <p v-if="show">hello</p>
+    </transition>
+  </div>
+  <!-- 显示过渡的持续时间
+  在很多情况下，Vue 可以自动得出过渡效果的完成时机。默认情况下，Vue 会等待其在过渡效果的根元素的第一个 transitionend 或 animationend 事件。
+  然而也可以不这样设定——比如，我们可以拥有一个精心编排的一系列过渡效果，其中一些嵌套的内部元素相比于过渡效果的根元素有延迟的或更长的过渡效果。
+  在这种情况下你可以用 <transition> 组件上的 duration 属性定制一个显性的过渡持续时间 (以毫秒计)：
+  <transition :duration="1000">...</transition>
+   你也可以定制进入和移出的持续时间：
+   <transition :duration="{ enter: 500, leave: 800 }">...</transition>
+  
+  -->
+  <!-- JavaScript钩子函数
+    可以在属性中声明 JavaScript 钩子
+
+    <transition
+      v-on:before-enter="beforeEnter"
+      v-on:enter="enter"
+      v-on:after-enter="afterEnter"
+      v-on:enter-cancelled="enterCancelled"
+
+      v-on:before-leave="beforeLeave"
+      v-on:leave="leave"
+      v-on:after-leave="afterLeave"
+      v-on:leave-cancelled="leaveCancelled"
+    >
+    </transition>
+    // ...
+    methods: {
+      // --------
+      // 进入中
+      // --------
+
+      beforeEnter: function (el) {
+        // ...
+      },
+      // 当与 CSS 结合使用时
+      // 回调函数 done 是可选的
+      enter: function (el, done) {
+        // ...
+        done()
+      },
+      afterEnter: function (el) {
+        // ...
+      },
+      enterCancelled: function (el) {
+        // ...
+      },
+
+      // --------
+      // 离开时
+      // --------
+
+      beforeLeave: function (el) {
+        // ...
+      },
+      // 当与 CSS 结合使用时
+      // 回调函数 done 是可选的
+      leave: function (el, done) {
+        // ...
+        done()
+      },
+      afterLeave: function (el) {
+        // ...
+      },
+      // leaveCancelled 只用于 v-show 中
+      leaveCancelled: function (el) {
+        // ...
+      }
+    }
+   -->
+   <!-- 当只用 JavaScript 过渡的时候，在 enter 和 leave 中必须使用 done 进行回调。否则，它们将被同步调用，过渡会立即完成。
+  推荐对于仅使用 JavaScript 过渡的元素添加 v-bind:css="false"，Vue 会跳过 CSS 的检测。这也可以避免过渡过程中 CSS 的影响。 -->
+  
+  
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data() {
+        return {
+          show: true
+        }
+      },
+    })
+
+    var app2 = new Vue({
+      el: "#app-2",
+      data() {
+        return {
+          show: true
+        }
+      },
+    })
+    var app3 = new Vue({
+      el: "#app-3",
+      data() {
+        return {
+          show: true
+        }
+      },
+    })
+
+    var app4 = new Vue({
+      el: "#app-4",
+      data() {
+        return {
+          show: true
+        }
+      },
+    })
+  </script>
+  <style scoped>
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity .5s;
+    }
+
+    .fade-enter,
+    .fade-leave-to {
+      opacity: 0.5;
+    }
+
+    /* 可以设置不同的进入和离开动画 */
+    /* 设置持续时间和动画函数 */
+    .slide-fade-enter-active {
+      transition: all .3s ease;
+    }
+
+    .slide-fade-leave-active {
+      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+
+    .slide-fade-enter,
+    .slide-fade-leave-to
+
+    /* .slide-fade-leave-active for below version 2.1.8 */
+      {
+      transform: translateX(10px);
+      opacity: 0;
+    }
+
+    .bounce-enter-active {
+      animation: bounce-in .5s;
+    }
+
+    .bounce-leave-active {
+      animation: bounce-in .5s reverse;
+    }
+
+    @keyframes bounce-in {
+      0% {
+        transform: scale(0);
+      }
+
+      50% {
+        transform: scale(1.5);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</body>
+
+
+</body>

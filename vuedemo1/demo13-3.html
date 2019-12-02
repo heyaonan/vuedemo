@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>进入/离开&列表过滤</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+  <!-- 多个元素的过渡 -->
+  <!-- 对于原生标签，可以使用v-if/v-else。最常见的多标签过渡是一个列表和描述这个列表为空消息的元素 -->
+  <div id="app-1">
+    <transition>
+      <table v-if="items.length >0">
+        <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>address</th>
+        </tr>
+        <tr v-for="(item, index) in items" :key="index">
+          <td>{{ item.id}}</td>
+          <td>{{ item.name}}</td>
+          <td>{{ item.address}}</td>
+        </tr>
+      </table>
+      <span v-else>Sorry, no items found.</span>
+    </transition>
+  </div>
+  <!-- 当有相同标签名的元素切换时，需要通过key特性来设置一个唯一的值来让vue区分它们，否则 Vue 为了效率只会替换相同标签内部的内容。
+    即使在技术上没有必要，给在 <transition> 组件中的多个元素设置 key 是一个更好的实践。如下是一个例子 -->
+  <div id="app-2">
+    <transition>
+      <button v-if="isEditing" key="edit">
+        Edit
+      </button>
+      <button v-else key="save">Save</button>
+    </transition>
+  </div>
+  <!-- 使用多个 v-if 的多个元素的过渡可以重写为绑定了动态属性的单个元素过渡。例如： -->
+  <div id="app-3">
+    <transition>
+      <button v-if="docState === 'saved'" key="saved">
+        Edit
+      </button>
+      <button v-if="docState === 'edited'" key="edited">
+        Save
+      </button>
+      <button v-if="docState === 'editing'" key="editing">
+        Cancel
+      </button>
+    </transition>
+  </div>
+
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data() {
+        return {
+          items: [
+            { id: "1", name: "张三", address: "广东省广州市" },
+            { id: "2", name: "王五", address: "广东省佛山市" }
+          ]
+        }
+      },
+    })
+    var app2 = new Vue({
+      el: "#app-2",
+      data() {
+        return {
+          isEditing: true
+        }
+      },
+    }) 
+  </script>
+
+</body>
