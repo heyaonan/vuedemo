@@ -1,20 +1,13 @@
 <template>
   <div id="app">
-   <Login></Login>
-   <ParentDom></ParentDom>
+    <img src="./assets/logo.png">
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import Login from './components/ComLogin'
-import ParentDom from './components/ParentDom'
 export default {
-  name: 'app',
-  components: {
-    Login,
-    ParentDom
-  }
+  name: 'App'
 }
 </script>
 
