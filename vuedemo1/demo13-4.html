@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>进入/离开&列表过滤</title>
+  <script src="vue.js" type="text/javascript" charset="UTF-8"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+  <!-- 这个是多个组件的过渡 -->
+  <div id="app-1">
+    <button v-on:click="add">Add</button>
+    <button v-on:click="remove">Remove</button>
+    <transition-group name="list" tag="p">
+      <span v-for="(item, index) in items" :key="index" class="list-item">
+        {{item}}
+      </span>
+    </transition-group>
+  </div>
+
+  <script type="text/javascript">
+    var app1 = new Vue({
+      el: "#app-1",
+      data() {
+        return {
+          items:[1,2,3,4,5,6,7,8,9],
+          nextNumber: 10
+        }
+      },
+      methods: {
+        randomIndex:function(){
+          return Math.floor(Math.random() * this.items.length)
+        },
+        add:function(){
+          this.items.splice(this.randomIndex(),0,this.nextNumber++)
+        },
+        remove:function(){
+          this.items.splice(this.randomIndex(),1)
+        }
+      },
+    })
+
+  </script>
+  <style scoped>
+    .list-item {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .list-enter-active, .list-leave-active{
+      transition: all 1s;
+    }
+    .list-enter, .list-leave-to{
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  </style>
+
+</body>
