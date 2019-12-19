@@ -1,4 +1,5 @@
 <template>
+<div >
   <div class="list" ref="wrapper">
     <div>
       <div class="area">
@@ -12,78 +13,50 @@
       <div class="area">
         <div class="title">热门城市</div>
         <div class="button-list">
-          <div class="button-wrapper">
-            <div class="button">北京</div>
-          </div>
-          <div class="button-wrapper">
-            <div class="button">上海</div>
-          </div>
-          <div class="button-wrapper">
-            <div class="button">广州</div>
-          </div>
-          <div class="button-wrapper">
-            <div class="button">深圳</div>
-          </div>
-          <div class="button-wrapper">
-            <div class="button">西安</div>
-          </div>
-          <div class="button-wrapper">
-            <div class="button">成都</div>
+          <div class="button-wrapper" v-for="hotcity in hotCityList" :key="hotcity.id">
+            <div class="button">{{hotcity.name}} </div>
           </div>
         </div>
       </div>
-      <div class="area">
-        <div class="title ">A</div>
+      <div class="area" v-for="(list, key) in cityList" 
+      :key="key"
+      :ref="key"
+      >
+        <div class="title ">{{key}}</div>
         <div class="item-list ">
-          <div class="item border-bottom">
-            阿坝
-          </div>
-           <div class="item border-bottom">
-            阿拉善
-          </div>
-           <div class="item border-bottom">
-            阿克苏
-          </div>
-           <div class="item border-bottom">
-            阿里
-          </div>
-           <div class="item border-bottom">
-            阿勒泰
-          </div>
-        </div>
-      </div>
-      <div class="area">
-        <div class="title ">B</div>
-        <div class="item-list ">
-          <div class="item border-bottom">
-            北京
-          </div>
-           <div class="item border-bottom">
-            包头
-          </div>
-           <div class="item border-bottom">
-            北海
-          </div>
-           <div class="item border-bottom">
-            北流
-          </div>
-           <div class="item border-bottom">
-            白山
+          <div class="item border-bottom" v-for="(item, index) in list" :key="index">
+            {{ item.name }}
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 import BScroll from 'better-scroll'
 export default {
   name: 'CityList',
+  props:{
+    cityList:Object,
+    hotCityList: Array,
+    letter:String
+  },
   mounted() {
+    console.log(this.$refs.wrapper)
     this.scroll = new BScroll(this.$refs.wrapper)
   },
+  watch: {
+    letter:function(){
+      if(this.letter){
+        this.scroll.scrollToElement(this.$refs[this.letter][0])
+      }
+      
+    }
+},
 }
+
 </script>
 
 <style lang="stylus" scoped>
