@@ -18,11 +18,13 @@
 <script>
 export default {
   name:"HomeHeader",
-  props: {
-    city: String
-  },
   data() {
     return {
+    }
+  },
+  computed: {
+    city:function(){
+      return this.$store.city
     }
   },
 }
