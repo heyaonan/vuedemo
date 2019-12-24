@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     city:function(){
-      return this.$store.city
+      return this.$store.state.city
     }
   },
 }
