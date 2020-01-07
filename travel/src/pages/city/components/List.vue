@@ -44,6 +44,7 @@
 
 <script>
 import BScroll from 'better-scroll'
+import { mapState } from 'vuex'
 export default {
   name: 'CityList',
   props:{
@@ -65,14 +66,14 @@ export default {
       
     }
 },
-computed: {
-  city:function(){
-      return this.$store.state.city
-    }
-},
+computed: mapState([
+  'city'
+]
+
+ ),
 methods: {
   handleCityClick:function(city){
-    this.$store.dispatch('changeCity',city)
+    this.$store.commit('changeCity',city)
     this.$router.push('/')
   }
 },

@@ -16,21 +16,21 @@
 </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name:"HomeHeader",
   data() {
     return {
     }
   },
-  computed: {
-    city:function(){
-      return this.$store.state.city
-    }
-  },
+  computed: mapState([
+    'city'
+  ]),
 }
 </script>
 <style lang="stylus" scoped>
 @import '~styles/varibles.styl'
+@import '~styles/mixin.styl'
 .header
   line-height: 0.86rem
   background: $bgColor
@@ -44,7 +44,8 @@ export default {
       text-align: center
   .header-right
     float: right 
-    width: 1.24rem
+    min-width: 1.04rem
+    padding 0 .1rem
     text-align: center
     color #fff
     .arrow-icon
