@@ -52,17 +52,14 @@ export default {
         this.weekendList = data.weekendList
         this.swiperList = data.swiperList
       }
-      console.log(res)
     }
 
   },
   mounted() {
-    console.log('mouted')
     this.lastyCity = this.city
     this.getHomeInfo()
   },
   activated(){
-    console.log('activated')
     if(this.lastyCity !== this.city){
       this.lastyCity = this.city
       this.getHomeInfo()

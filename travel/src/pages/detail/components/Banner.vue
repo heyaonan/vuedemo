@@ -1,24 +1,51 @@
 <template>
-  <div class="banner">
+<div>
+  <div class="banner" @click="bannerClick">
     <div class="banner-image">
-      <img src="https://imgs.qunarzz.com/sight/p0/2001/85/85d9988db74c3a90a3.water.jpg_710x360_847a0cc1.jpg">
+      <img :src="bannerImg">
     </div>
     <div class="banner-info">
-      <div class="info-title">珠海长隆度假村野生动物园欢迎您</div>
+      <div class="info-title">{{ this.sightName }}</div>
       <div class="info-number">
         <span class="iconfont number-icon">&#xe605;</span>
-        39</div>
+        {{ this.gallaryImgs.length }}</div>
     </div>
   </div>
+  <div>
+    <fade-animation>
+      <common-gallary v-if="isGallary" @close="closeGallary" :images="gallaryImgs"></common-gallary>
+    </fade-animation> 
+  </div>
+</div>
+  
 </template>
 <script>
+import CommonGallary from '@/common/gallary/Gallary'
+import FadeAnimation from '@/common/fade/FadeAnimation'
 export default {
   name: "DetailBanner",
+  props:{
+    bannerImg: String,
+    gallaryImgs: Array,
+    sightName: String
+  },
   data() {
     return {
-      
+      isGallary: false,
     }
   },
+  components:{
+    CommonGallary,
+    FadeAnimation
+  },
+  methods: {
+    closeGallary(){
+      this.isGallary = false
+    },
+    bannerClick(){
+      this.isGallary = true
+    }
+  }
 }
 </script>
 <style lang="stylus" scoped>
@@ -53,6 +80,7 @@ export default {
         margin-top .14rem
         .number-icon
          font-size .16rem
+  
 
 
      
